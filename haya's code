@@ -7,6 +7,8 @@ Created on Sun Oct 23 20:47:33 2022
 
 #Reading the las file
 # you need to pip installl lasio
+pip install opencv-python
+Collecting opencv-python
 well=la.read('1051661275.las')
 
 #Conversion of las file to dataframe
