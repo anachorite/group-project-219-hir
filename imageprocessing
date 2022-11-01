@@ -1,3 +1,4 @@
+pip install opencv-python
 import cv2
 import matplotlib.pyplot as plt
 
@@ -89,7 +90,7 @@ plt.imshow(im5)
 plt.title("image") 
 plt.show()
 
-im = np.array(Image.open('WhatsApp Image 2022-10-30 at 1.21.43 PM.jpeg'))
+im = np.array(Image.open('berea8bit.tif'))
 
 im_th = np.empty_like(im)
 
