@@ -1,0 +1,137 @@
+# the space between the
+# pip install opencv-python
+import cv2
+import matplotlib.pyplot as plt
+
+im = cv2.imread('berea8bit.tif')
+
+plt.show(im.all())
+plt.title("image")
+plt.show()
+
+th, im_th = cv2.threshold(im, 128, 255, cv2.THRESH_BINARY)
+print(th)
+cv2.imwrite('opencv_th.jpg', im_th)
+
+im1 = cv2.imread('opencv_th.jpg')
+
+plt.imshow(im1)
+plt.title("image")
+plt.show()
+
+th, im_th_tz = cv2.threshold(im, 128, 255, cv2.THRESH_TOZERO)
+cv2.imwrite("opencv_th_tz.jpg", im_th_tz)
+
+im2 = cv2.imread('opencv_th_tz.jpg')
+plt.imshow(im2)
+plt.title("image") 
+plt.show()
+
+im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+th, im_gray_th_otsu = cv2.threshold(im_gray, 128, 192, cv2.THRESH_OTSU)
+cv2.imwrite('opencv_th_otsu.jpg', im_gray_th_otsu)
+
+im3 = cv2.imread('opencv_th_otsu.jpg')
+plt.imshow(im3)
+plt.title("image") 
+plt.show()
+
+import numpy as np
+from PIL import Image
+# im_gray = np.array(Image.open('berea8bit.tif').convert('L'))
+print(type(im_gray))
+
+thresh = 128
+im_bool = im_gray > thresh
+print(im_bool)
+
+maxval = 255
+im_bin = (im_gray > thresh) * maxval
+print(im_bin)
+
+Image.fromarray(np.uint8(im_bin)).save('numpy_binarization.png')
+
+im4 = cv2.imread('numpy_binarization.png')
+plt.imshow(im4)
+plt.title("image") 
+
+im_bin_keep = (im_gray > thresh) * im_gray
+print(im_bin_keep)
+
+Image.fromarray(np.uint8(im_bin_keep)).save('numpy_binarization_keep.png')
+
+im5 = cv2.imread('numpy_binarization_keep.png')
+plt.imshow(im5)
+plt.title("image") 
+plt.show()
+
+im_bool = im_gray > 128
+im_dst = np.empty((*im_gray.shape, 3))
+r, g, b = 255, 128, 32
+im_dst[:, :, 0] = im_bool * r
+im_dst[:, :, 1] = im_bool * g
+im_dst[:, :, 2] = im_bool * b
+Image.fromarray(np.uint8(im_dst)).save('numpy_binarization_color.png')
+plt.show()
+
+im5 = cv2.imread('numpy_binarization_color.png')
+plt.imshow(im5)
+plt.title("image") 
+plt.show()
+
+im_bool = im_gray > 128
+im_dst = np.empty((*im_gray.shape, 3))
+r, g, b = 128, 160, 192
+im_dst[:, :, 0] = im_bool * r
+im_dst[:, :, 1] = ~im_bool * g
+im_dst[:, :, 2] = im_bool * b
+Image.fromarray(np.uint8(im_dst)).save('numpy_binarization_color2.png')
+
+im5 = cv2.imread('numpy_binarization_color2.png')
+plt.imshow(im5)
+plt.title("image") 
+plt.show()
+
+# im = np.array(Image.open('berea8bit.tif'))
+im_th = np.empty_like(im)
+thresh = 128
+maxval = 255
+for i in range(3):
+    im_th[:, :, i] = (im[:, :, i] > thresh) * maxval
+Image.fromarray(np.uint8(im_th)).save('numpy_binarization_from_color.png')
+
+im6 = cv2.imread('numpy_binarization_from_color.png')
+plt.imshow(im6)
+plt.title("image") 
+plt.show()
+
+l_thresh = [64, 128, 192]
+l_maxval = [64, 128, 192]
+for i, thresh, maxval in zip(range(3), l_thresh, l_maxval):
+    im_th[:, :, i] = (im[:, :, i] > thresh) * maxval
+Image.fromarray(np.uint8(im_th)).save('numpy_binarization_from_color2.png')
+
+im7 = cv2.imread('numpy_binarization_from_color2.png')
+plt.imshow(im7)
+plt.title("image") 
+plt.show()
+
+# original vs edge image
+import cv2 as cv
+img = cv.imread('berea8bit.tif', 0)
+edges = cv.Canny(img, 100, 200)
+plt.subplot(121), plt.imshow(img, cmap='gray')
+plt.title('Original Image'), plt.xticks([]), plt.yticks([])
+plt.subplot(122), plt.imshow(edges, cmap='gray')
+plt.title('Edge Image'), plt.xticks([]), plt.yticks([])
+plt.show()
+
+#physical edges
+import cv2
+img = cv2.imread('berea8bit.tif')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+edges = cv2.Canny(gray, 100, 200)
+ret, th2 = cv2.threshold(edges, 100, 255, cv2.THRESH_BINARY_INV)
+cv2.imshow("img", th2)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
