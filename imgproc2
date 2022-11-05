@@ -31,5 +31,5 @@ plt.show()
 
 # Calculation of prosity (without edges) by determining area of pores and solid (grains
 area_solid=(np.sum(bw))/255       # Area of solids/grains
-porosity = ((area_im - area_solid)/area_im)*100 # Porosity = ((TotalVloume-Volume of Solids)/Total Volume)*100
+porosity = ((area_im - area_solid)/area_im)*100 # Porosity = ((TotalVolume-Volume of Solids)/Total Volume)*100
 print("Porosity of sample including edges" , porosity)
