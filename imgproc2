@@ -1,0 +1,35 @@
+# import orthoslice / display / convert to a numpy array
+import numpy as np
+from PIL import Image
+from matplotlib import pyplot as plt
+import cv2
+
+im = cv2.imread('berea8bit.tif')
+plt.imshow(im)
+plt.title('original_image')
+plt.show()
+imarray = np.array(im)
+
+# convert image to a property vector and display as a histogram
+imV = imarray.reshape(np.prod(imarray.shape), 1)
+
+plt.hist(imV, density=True, bins=30, range=[10,200]) # Select Range in which full histogram is clear, starting with maximum and then reduce to desire one where data can easily be read
+plt.title("Histogram")
+plt.savefig('Histogram.jpg', dpi = 600)
+plt.show()
+
+# thresholding of image 
+# Use the histogram to determine a cut off between the solid (i.e. carbonate matrix) and porous domain....Left/right= porosity/solid
+# Using logical indexing, write a code to segment the input image into a binary image using the determined cut-off. Assign pore-space to zero and matrix to one (255)
+bw=imarray.copy()
+bw[bw<100]=0 # Use logical value of range porosity/pores (left side of histogram) 
+bw[bw>100]=255 # Range of area of solid (right side) in Histogram
+plt.imshow(bw, cmap='Greys_r')
+plt.title('Threshold image')
+plt.savefig('Threshold_image.jpg', dpi = 600)
+plt.show()
+
+# Calculation of prosity (without edges) by determining area of pores and solid (grains
+area_solid=(np.sum(bw))/255       # Area of solids/grains
+porosity = ((area_im - area_solid)/area_im)*100 # Porosity = ((TotalVloume-Volume of Solids)/Total Volume)*100
+print("Porosity of sample including edges" , porosity)
