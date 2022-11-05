@@ -1,0 +1,57 @@
+# import required libraries
+from scipy.stats import norm
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sb
+import pandas as pd 
+
+df = pd.read_csv('poro_perm_data.csv')
+phi = df['Porosity (%)']
+k =  df['Permeability (mD)']
+plt.hist(phi, 10)
+plt.xlabel('Porosity (%)')
+plt.ylabel('n')
+plt.show()
+
+df = pd.read_csv('poro_perm_data.csv')
+phi = df['Porosity (%)']
+k =  df['Permeability (mD)']
+plt.hist(k, 10)
+plt.xlabel('Permeability (mD)')
+plt.ylabel('n')
+plt.show()
+
+import pylab
+import scipy.stats as stats
+stats.probplot(k, dist="norm", plot=pylab)
+pylab.show()
+
+# Anderson-Darling Test
+from scipy.stats import anderson
+# normality test for porosity, phi
+result = anderson(phi)
+print('Statistic: %.3f' % result.statistic) 
+p=0
+# interpret results
+for i in range(len(result.critical_values)):
+    slevel, cvalues = result.significance_level[i], result.critical_values[i]
+if result.statistic < result.critical_values[i]:
+        print('%.3f: %.3f, data looks normal (fail to reject H0)' % (slevel, cvalues))
+else:
+    print('%.3f: %.3f, data does not look normal (reject H0)' % (slevel, cvalues))
+    
+
+# Anderson-Darling Test
+from scipy.stats import anderson
+# normality test for permeability, k result = anderson(k)
+print('Statistic: %.3f' % result.statistic) 
+p=0
+# interpret results
+for i in range(len(result.critical_values)):
+    slevel, cvalues = result.significance_level[i],result.critical_values[i]
+if result.statistic < result.critical_values[i]:
+    print('%.3f: %.3f, data looks normal (fail to reject H0)' % (slevel, cvalues))
+else:
+    print('%.3f: %.3f, data does not look normal (reject H0)' % (slevel, cvalues))
+
+# All the data does not look normal for both datasets (the permeability and porosity) and are considered statistically significant
