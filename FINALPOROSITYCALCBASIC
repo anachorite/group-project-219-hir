@@ -1,0 +1,58 @@
+# pip install opencv-python
+
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+from scipy import ndimage
+
+
+#read image and define pixel size
+img = cv2.imread("berea8bit.tif",0)
+plt.imshow(img)
+plt.title('Grey Image')
+plt.show()
+
+#denoise using cv2 NlMeans filtration
+dst = cv2.fastNlMeansDenoising(img,None,10,7,21)
+plt.subplot(121),plt.imshow(img),plt.title('Original Image')
+plt.subplot(122),plt.imshow(dst),plt.title('Filtered Image')
+plt.show()
+
+# plot a histogram
+plt.hist(img.flat, bins=100, range=(0,255))
+plt.title("Histogram")
+plt.show()
+
+#convert the grey image to binary through thresholding
+ret, thresh = cv2.threshold(dst, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+print(ret)  # OTSU determined this to be the best threshold
+plt.imshow(thresh)
+plt.title('Threshold Image')
+plt.show()
+#some boundaries are ambiguous/faint.
+#residue pixels in the middle. 
+
+#use morphological techniques (erode, etc.) to clean the code further and create a mask for the grains
+kernel = np.ones((3,3),np.uint8) 
+eroded = cv2.erode(thresh,kernel,iterations = 1)
+plt.imshow(eroded)
+plt.title('Eroded Image')
+plt.show()
+dilated = cv2.dilate(eroded,kernel,iterations = 1)
+plt.imshow(dilated)
+plt.title('Dilated Image')
+plt.show()
+#convert float image to Boolean
+mask = dilated == 255 
+print(mask)   # confirm the image is not inverted 
+#cv2.imshow() not working
+#cv2.imshow("image", mask)
+#cv2.waitKey(0)
+
+#calculate the porsity by determining the area of the pores and grains
+bw = np.array(mask)
+area_im = np.size(bw)              # total area of the image
+area_solid = np.count_nonzero(bw)      # area of the grains
+porosity = ((area_im - area_solid)/area_im)*100 
+print("The porosity of the sample is" , porosity)
+#the porosity is around 19
